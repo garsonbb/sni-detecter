@@ -63,10 +63,11 @@ def worker (ip,t,m):
         f = open (output,'w')
         try:
             for v in passip:
-                f.writelines(v)
+                f.writelines(v+'\n')
         finally:
             f.close()
             print('bye,文件已写出到'+output)
+            raw_input()
 
 
 
@@ -80,4 +81,3 @@ for a in ips:
 [pool.putRequest(req) for req in requests]
 print('Working')
 pool.wait()
-raw_input()
