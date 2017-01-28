@@ -1,6 +1,5 @@
 # by garson blog garnote.top
 import socket, ssl
-import IPy
 
 def detect (ip,timeout) :
     context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
