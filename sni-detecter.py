@@ -20,7 +20,7 @@ def main():
     except getopt.GetoptError as err:
         usage()
         sys.exit('parameter error')
-    global rin ,output,timeout,parallels,ips,mod
+    global rin ,output ,timeout ,parallels ,ips ,mod
     for o, a in opts:
         if o in ('-i','--in'):
             rin = a
@@ -30,9 +30,9 @@ def main():
             usage()
             sys.exit()
         elif o in ('-t','--timeout'):
-            timeout = a
+            timeout = int(a)
         elif o in ('-p','--parallels'):
-            parallels = a
+            parallels = int(a)
         elif o == '-m':
             mod = False
     file_obj = open(rin)
@@ -66,8 +66,8 @@ def worker (ip,t,m):
                 f.writelines(v+'\n')
         finally:
             f.close()
-            print('bye,文件已写出到'+output)
-            raw_input()
+            print('bye,文件已写出到'+output+'，按Enter退出。')
+            input()
 
 
 
