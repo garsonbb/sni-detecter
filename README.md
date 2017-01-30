@@ -22,3 +22,5 @@
 input文件的格式
 > 127.0.0.1-127.0.1.0
 支持多行
+
+博客地址 ： [garnote.top][http://garnote.top]
