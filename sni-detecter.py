@@ -17,9 +17,10 @@ times = 0
 n = 0
 def main():
     try:
-        opts ,args = getopt.getopt(sys.argv[1:],'i:o:t:p:h:n:m',['in','out','help','timeout','parallels','hostname'])
+        opts ,args = getopt.getopt(sys.argv[1:],'i:o:t:p:n:mh',['in','out','timeout','parallels','mod','hostname'])
     except getopt.GetoptError as err:
         usage()
+        print(err)
         sys.exit('parameter error')
     global rin ,output ,timeout ,parallels ,ips ,mod ,hostname
     for o, a in opts:
@@ -36,7 +37,7 @@ def main():
             hostname = a
         elif o in ('-p','--parallels'):
             parallels = int(a)
-        elif o == '-m':
+        elif o in ('-m','--mod'):
             mod = False
     file_obj = open(rin)
     try:
