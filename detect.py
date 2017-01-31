@@ -1,14 +1,14 @@
 # by garson blog garnote.top
 import socket, ssl
 
-def detect (ip,timeout) :
+def detect (ip,timeout,hostname) :
     context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
     context.verify_mode = ssl.CERT_REQUIRED
     #context.check_hostname = True
     context.load_default_certs()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout)
-    ssl_sock = context.wrap_socket(s, server_hostname='www.baidu.com')
+    ssl_sock = context.wrap_socket(s, server_hostname = hostname)
     try:
         ssl_sock.connect((ip, 443))#219.76.4.4 218.254.1.13
     except:  
@@ -23,6 +23,7 @@ def usage():
 -o, --out 测试通过ip的保存路径。默认为/passip+输出时间.txt。
 -p, --parallels [number] 默认线程数为20。
 -t, --timeout [float] 超时时间 单位为s 默认为2s。
+-n, --hostname 默认为谷歌。
 -h, --help 帮助。
 -m, 不输出检验失败ip。默认为输出。
     '''

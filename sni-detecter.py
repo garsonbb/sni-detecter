@@ -8,6 +8,7 @@ rin = 'task.txt'
 output = 'replace'
 timeout = 2
 parallels = 20
+hostname = 'google.com'
 mod = True
 ips = []
 passip = []
@@ -20,7 +21,7 @@ def main():
     except getopt.GetoptError as err:
         usage()
         sys.exit('parameter error')
-    global rin ,output ,timeout ,parallels ,ips ,mod
+    global rin ,output ,timeout ,parallels ,ips ,mod ,hostname
     for o, a in opts:
         if o in ('-i','--in'):
             rin = a
@@ -31,6 +32,8 @@ def main():
             sys.exit()
         elif o in ('-t','--timeout'):
             timeout = int(a)
+        elif o in ('-n' , '--hostname'):
+            hostname = a
         elif o in ('-p','--parallels'):
             parallels = int(a)
         elif o == '-m':
@@ -45,9 +48,9 @@ def main():
 if __name__ == '__main__':
     main()
 
-def worker (ip,t,m):
+def worker (ip,t,m,h):
     global times ,n ,passip
-    if detect(ip,t) == True:
+    if detect(ip,t,h) == True:
         passip.append(ip)
         print ('√   '+ip)
     else:
@@ -75,7 +78,7 @@ pool = threadpool.ThreadPool(parallels)
 requests = []
 n = len(ips)
 for a in ips:
-    c = [a,timeout,mod]
+    c = [a,timeout,mod,hostname]
     var =[(c,None)]
     requests += threadpool.makeRequests(worker,var)
 [pool.putRequest(req) for req in requests]
