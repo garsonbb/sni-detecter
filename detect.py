@@ -11,6 +11,11 @@ def detect (ip,timeout,hostname) :
     ssl_sock = context.wrap_socket(s, server_hostname = hostname)
     try:
         ssl_sock.connect((ip, 443))#219.76.4.4 218.254.1.13
+        ca = str(ssl_sock.getpeercert())
+        if ca.find(hostname) == -1:
+            return False
+        else:
+            return True
     except:  
         return False
     return True
