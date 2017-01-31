@@ -17,7 +17,7 @@ times = 0
 n = 0
 def main():
     try:
-        opts ,args = getopt.getopt(sys.argv[1:],'i:o:t:p:h:m',['in','out','help','timeout','parallels'])
+        opts ,args = getopt.getopt(sys.argv[1:],'i:o:t:p:h:n:m',['in','out','help','timeout','parallels','hostname'])
     except getopt.GetoptError as err:
         usage()
         sys.exit('parameter error')
