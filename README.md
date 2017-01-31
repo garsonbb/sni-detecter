@@ -13,7 +13,7 @@
 
 > -t, --timeout [float] 超时时间 单位为s 默认为2s。
 
--n, --hostname 默认为谷歌。
+> -n, --hostname 默认为谷歌。
 
 > -h, --help 帮助。
 
@@ -24,5 +24,7 @@
 input文件的格式
 > 127.0.0.1-127.0.1.0
 支持多行
+
+hostname 默认用谷歌，避免扫描到大量cdn和bfe。建议用没有cdn的网站作为hostname
 
 博客地址 ： [garnote.top](http://garnote.top)
