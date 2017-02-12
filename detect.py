@@ -1,3 +1,5 @@
+#coding=utf-8
+
 # by garson blog garnote.top
 import socket, ssl
 
@@ -12,6 +14,8 @@ def detect (ip,timeout,hostname) :
     try:
         ssl_sock.connect((ip, 443))#219.76.4.4 218.254.1.13
         ca = str(ssl_sock.getpeercert())
+        ssl_sock.close()
+        s.close()
         if ca.find(hostname) == -1:
             return False
         else:

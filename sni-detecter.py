@@ -1,3 +1,5 @@
+#coding=utf-8
+
 # by garson blog garnote.top
 import sys, getopt
 import threadpool
