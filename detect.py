@@ -2,6 +2,7 @@
 
 # by garson blog garnote.top
 import socket, ssl
+from netaddr import IPNetwork
 
 def detect (ip,timeout,hostname) :
     context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
@@ -20,7 +21,7 @@ def detect (ip,timeout,hostname) :
             return False
         else:
             return True
-    except:  
+    except:
         return False
     return True
 
@@ -48,6 +49,10 @@ def gen_ip(a):
             tmp = iprange(list2[0],list2[1])
             for b in tmp:
                 temp.append(b)
+        elif len(n.split('/')) == 2:
+            tmp = IPNetwork(n)
+            for b in tmp:
+                temp.append(str(b))
     return temp
 
 def ip2num(ip):#ip to int num
