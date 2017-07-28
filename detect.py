@@ -35,7 +35,6 @@ def usage():
 -t, --timeout [float] 超时时间 单位为s 默认为2s。
 -n, --hostname 默认为谷歌。
 -h, --help 帮助。
--m, 不输出检验失败ip。默认为输出。
     '''
     print(helps)
 
