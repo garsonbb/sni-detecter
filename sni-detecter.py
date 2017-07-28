@@ -17,9 +17,10 @@ passip = []
 
 times = 0
 n = 0
+stop = False
 def main():
     try:
-        opts ,args = getopt.getopt(sys.argv[1:],'i:o:t:p:n:mh',['in','out','timeout','parallels','mod','hostname'])
+        opts ,args = getopt.getopt(sys.argv[1:],'i:o:t:p:n:h',['in','out','timeout','parallels','hostname'])
     except getopt.GetoptError as err:
         usage()
         print(err)
@@ -39,8 +40,6 @@ def main():
             hostname = a
         elif o in ('-p','--parallels'):
             parallels = int(a)
-        elif o in ('-m','--mod'):
-            mod = False
     file_obj = open(rin)
     try:
         txt = file_obj.read()
@@ -52,15 +51,14 @@ if __name__ == '__main__':
     main()
 
 def worker (ip,t,m,h):
-    global times ,n ,passip
+    global times ,n ,passip,stop
     if detect(ip,t,h) == True:
         passip.append(ip)
-        print ('√   '+ip)
-    else:
-        if m == False:
-            print ('x   '+ip)
+        printx ('√   '+ip , 1)
     times += 1
-    if times == n :
+    printx()
+    if times == n and stop == False :
+        stop == True
         global output
         print ('√   finish  ' + '本次扫描了'+ str(times) +'个ip,'+'SNI_IP有'+ str(len(passip)) +'个。')
         if output == 'replace':
@@ -77,6 +75,18 @@ def worker (ip,t,m,h):
 
 
 
+def printx (text = '',type = 0):
+    global times ,n
+    p = int((times/n)*30)
+    t1 = '##############################' #30
+    t2 = '                              ' #30
+    if type == 1:
+        sys.stdout.write('                                                      \r')
+        sys.stdout.flush()
+        print(text)
+    else:
+        sys.stdout.write('[' + t1[0:p] + t2 [0:30-p] + ']' + '\r')
+        sys.stdout.flush()
 pool = threadpool.ThreadPool(parallels)
 requests = []
 n = len(ips)
@@ -86,4 +96,5 @@ for a in ips:
     requests += threadpool.makeRequests(worker,var)
 [pool.putRequest(req) for req in requests]
 print('Working')
+printx()
 pool.wait()
