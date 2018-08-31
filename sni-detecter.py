@@ -2,22 +2,22 @@
 
 # by garson blog garnote.top
 import sys, getopt
-import threadpool
+import queue
 import time
 from detect import *
+import concurrent.futures
+
 
 rin = 'task.txt'
 output = 'replace'
-timeout = 2
-parallels = 20
+timeout = 5
+parallels = 100
 hostname = 'google.com'
-mod = True
-ips = []
 passip = []
 
 times = 0
 n = 0
-stop = False
+
 def main():
     try:
         opts ,args = getopt.getopt(sys.argv[1:],'i:o:t:p:n:h',['in','out','timeout','parallels','hostname'])
@@ -25,7 +25,7 @@ def main():
         usage()
         print(err)
         sys.exit('parameter error')
-    global rin ,output ,timeout ,parallels ,ips ,mod ,hostname
+    global rin ,output ,timeout ,parallels ,hostname,ipQueue
     for o, a in opts:
         if o in ('-i','--in'):
             rin = a
@@ -43,40 +43,32 @@ def main():
     file_obj = open(rin)
     try:
         txt = file_obj.read()
-        ips = gen_ip(txt)
-        print('读入了'+ str(len(ips)) +'个ip')
+        ipQueue = gen_ip(txt)
+        print('读入了'+ str(ipQueue.qsize()) +'个ip')
     finally:
         file_obj.close()
 if __name__ == '__main__':
     main()
 
-def worker (ip,t,m,h):
-    global times ,n ,passip,stop
-    if detect(ip,t,h) == True:
-        passip.append(ip)
-        printx ('√   '+ip , 1)
-    times += 1
+
+def worker (t,h):
+    global times ,passip ,ipQueue
+    try:
+        ip = ipQueue.get(timeout=5)
+    except:
+        pass
+    else:
+        r = detect(ip,t,h)
+        times += 1
+        if r == True:
+            passip.append(ip)
+            printx ('√   '+ip , 1)
     printx()
-    if times == n and stop == False :
-        stop == True
-        global output
-        print ('√   finish  ' + '本次扫描了'+ str(times) +'个ip,'+'SNI_IP有'+ str(len(passip)) +'个。')
-        if output == 'replace':
-            name = time.strftime('%Y-%m-%d-%H-%M-%S',time.localtime(time.time()))
-            output = 'PassIp '+ name +'.txt'
-        f = open (output,'w')
-        try:
-            for v in passip:
-                f.writelines(v+'\n')
-        finally:
-            f.close()
-            print('bye,文件已写出到'+output+'，按Enter退出。')
-            input()
 
 
 
 def printx (text = '',type = 0):
-    global times ,n
+    global times,n
     p = int((times/n)*30)
     t1 = '##############################' #30
     t2 = '                              ' #30
@@ -87,14 +79,28 @@ def printx (text = '',type = 0):
     else:
         sys.stdout.write('[' + t1[0:p] + t2 [0:30-p] + ']' + '\r')
         sys.stdout.flush()
-pool = threadpool.ThreadPool(parallels)
-requests = []
-n = len(ips)
-for a in ips:
-    c = [a,timeout,mod,hostname]
-    var =[(c,None)]
-    requests += threadpool.makeRequests(worker,var)
-[pool.putRequest(req) for req in requests]
+
+
+executor = concurrent.futures.ThreadPoolExecutor(parallels)
+n = ipQueue.qsize()
+
+all_task = [executor.submit(worker,timeout,hostname) for i in range(n)]
+
 print('Working')
 printx()
-pool.wait()
+
+concurrent.futures.wait(all_task)
+executor.shutdown(wait=True)
+
+print ('√   finish  ' + '本次扫描了'+ str(times) +'个ip,'+'SNI_IP有'+ str(len(passip)) +'个。')
+if output == 'replace':
+    name = time.strftime('%Y-%m-%d-%H-%M-%S',time.localtime(time.time()))
+    output = 'PassIp '+ name +'.txt'
+f = open (output,'w')
+try:
+    for v in passip:
+        f.writelines(v+'\n')
+finally:
+    f.close()
+    print('bye,文件已写出到'+output+'，按Enter退出。')
+    input()

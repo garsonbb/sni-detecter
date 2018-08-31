@@ -2,7 +2,8 @@
 
 # by garson blog garnote.top
 import socket, ssl
-from netaddr import IPNetwork
+import queue
+from netaddr import IPNetwork,IPRange
 
 def detect (ip,timeout,hostname) :
     context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
@@ -39,48 +40,17 @@ def usage():
     print(helps)
 
 def gen_ip(a):
+    ipQueue = queue.Queue()
     txt = a
-    temp = []
     list1 = txt.split("\n")
     for n in list1:
         list2 = n.split('-')
         if len(list2) == 2:
-            tmp = iprange(list2[0],list2[1])
+            tmp = IPRange(list2[0],list2[1])
             for b in tmp:
-                temp.append(b)
+                ipQueue.put(b)
         elif len(n.split('/')) == 2:
             tmp = IPNetwork(n)
             for b in tmp:
-                temp.append(str(b))
-    return temp
-
-def ip2num(ip):#ip to int num
-    lp = [int(x) for x in ip.split('.')]
-    return lp[0] << 24 | lp[1] << 16 | lp[2] << 8 | lp[3]
-
-
-def num2ip(num):# int num to ip
-    ip = ['', '', '', '']
-    ip[3] = (num & 0xff)
-    ip[2] = (num & 0xff00) >> 8
-    ip[1] = (num & 0xff0000) >> 16
-    ip[0] = (num & 0xff000000) >> 24
-    return '%s.%s.%s.%s' % (ip[0], ip[1], ip[2], ip[3])
-
-
-def iprange(ip1,ip2):
-    num1 = ip2num(ip1)
-    num2 = ip2num(ip2)
-    temp = []
-    tmp = num2 - num1
-    n = 0
-    if tmp < 0:
-        return None
-    else:
-        for num in range(num1,num2 + 1):
-            temp.append(num2ip(num1 + n))
-            n +=1
-        return(temp)
-
-
-#print(iprange('192.168.199.1','192.168.200.1'))
+                ipQueue.put(str(b))
+    return ipQueue
