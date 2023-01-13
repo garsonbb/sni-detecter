@@ -6,7 +6,7 @@ import queue
 from netaddr import IPNetwork,IPRange
 
 def detect (ip,timeout,hostname) :
-    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.verify_mode = ssl.CERT_REQUIRED
     #context.check_hostname = True
     context.load_default_certs()
