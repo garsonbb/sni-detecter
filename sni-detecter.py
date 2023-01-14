@@ -20,7 +20,7 @@ n = 0
 
 def main():
     try:
-        opts ,args = getopt.getopt(sys.argv[1:],'i:o:t:p:n:h',['in','out','timeout','parallels','hostname'])
+        opts ,args = getopt.getopt(sys.argv[1:],'i:o:t:p:n:h',['in=','out=','timeout=','parallels=','hostname=','help'])
     except getopt.GetoptError as err:
         usage()
         print(err)
