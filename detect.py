@@ -8,23 +8,19 @@ from netaddr import IPNetwork,IPRange
 def detect (ip,timeout,hostname) :
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.verify_mode = ssl.CERT_REQUIRED
-    #context.check_hostname = True
+    context.check_hostname = True
     context.load_default_certs()
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout)
     ssl_sock = context.wrap_socket(s, server_hostname = hostname)
     try:
         ssl_sock.connect((ip, 443))#219.76.4.4 218.254.1.13
-        ca = str(ssl_sock.getpeercert())
-        ssl_sock.close()
-        s.close()
-        if ca.find(hostname) == -1:
-            return False
-        else:
-            return True
+        return True
     except:
         return False
-    return True
+    finally:
+        ssl_sock.close()
+        s.close()
 
 #print(detect("219.76.4.4",2))
 
